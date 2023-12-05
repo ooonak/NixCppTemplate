@@ -8,12 +8,32 @@
   outputs = inputs@{ flake-parts, ... }:
   flake-parts.lib.mkFlake { inherit inputs; } {
 
-    systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
-    perSystem = { config, self', inputs', pkgs, system, ... }: {
+    #systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
+    systems = [ "x86_64-linux" ];
+    perSystem = { config, self', inputs', pkgs, system, lib, ... }: {
 
       packages = {
         default = pkgs.callPackage ./package.nix { };
         clang = pkgs.callPackage ./package.nix { stdenv = pkgs.clang16Stdenv; };
+
+        dockerImage = pkgs.dockerTools.buildImage {
+          name = "CppTemplAppContainer";
+          created = "now";
+          #tag = "latest";
+          tag = builtins.substring 0 9 (self'.rev or "dev");
+          copyToRoot = pkgs.buildEnv {
+            paths = with pkgs; [
+              self'.packages.default
+            ];
+            name = "cpptemplapp-root";
+            pathsToLink = [ "/bin" "/lib" "/include" ];
+          };
+          config = {
+            #Cmd = [ "${pkgs.lib.getExe self'.packages.default}" ];
+            Cmd = [ "bin/CppTemplApp" ];
+          };
+        };
+
       } // pkgs.lib.optionalAttrs (system != "x86_64-linux") {
         crossIntel = pkgs.pkgsCross.gnu64.callPackage ./package.nix {
           enableTests = false;
@@ -30,19 +50,6 @@
         };
       };
 
-      packages.dockerImage = pkgs.dockerTools.buildImage {
-        name = "foo";
-        copyToRoot = pkgs.buildEnv {
-          paths = with pkgs; [
-            self'.packages.default
-          ];
-          name = "foo-root";
-          pathsToLink = [ "/bin" "/lib" "/include" ];
-        };
-        config = {
-          Cmd = [ "${pkgs.lib.getExe self'.packages.default}" ];
-        };
-      };
 
     };
 
