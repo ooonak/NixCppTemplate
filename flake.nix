@@ -8,8 +8,7 @@
   outputs = inputs@{ flake-parts, ... }:
   flake-parts.lib.mkFlake { inherit inputs; } {
 
-    #systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
-    systems = [ "x86_64-linux" ];
+    systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
     perSystem = { config, self', inputs', pkgs, system, lib, ... }: {
 
       packages = {
@@ -19,7 +18,6 @@
         dockerImage = pkgs.dockerTools.buildImage {
           name = "CppTemplAppContainer";
           created = "now";
-          #tag = "latest";
           tag = builtins.substring 0 9 (self'.rev or "dev");
           copyToRoot = pkgs.buildEnv {
             paths = with pkgs; [
@@ -29,7 +27,6 @@
             pathsToLink = [ "/bin" "/lib" "/include" ];
           };
           config = {
-            #Cmd = [ "${pkgs.lib.getExe self'.packages.default}" ];
             Cmd = [ "bin/CppTemplApp" ];
           };
         };
@@ -49,7 +46,6 @@
           stdenv = pkgs.clang16Stdenv;
         };
       };
-
 
     };
 
