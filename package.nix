@@ -3,11 +3,11 @@
 , cmake
 , clang-tools_16
 , gtest
-#, lldb_16
+, lldb_16
 , mold
 , ninja
 , spdlog
-#, valgrind
+, valgrind
 , enableTests ? true
 }:
 
@@ -30,10 +30,10 @@ stdenv.mkDerivation {
   nativeBuildInputs = [
     cmake
     clang-tools_16
-#    lldb_16
+    lldb_16
     mold
     ninja
-#    valgrind
+    valgrind
   ];
   buildInputs = [
     spdlog

@@ -5,8 +5,18 @@
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
 
+#if defined(__clang__)
+#define CC "clang++"
+#elif defined (__GNUC__)
+#define CC "g++"
+#else
+#define CC "<unknown compiler>"
+#endif
+
 void setupLogging(std::vector<spdlog::sink_ptr> &sinks)
 {
+  std::cout << "Compiler: " << CC << " " << __VERSION__ << std::endl;
+
   try
   {
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
