@@ -30,6 +30,20 @@
         };
       };
 
+      packages.dockerImage = pkgs.dockerTools.buildImage {
+        name = "foo";
+        copyToRoot = pkgs.buildEnv {
+          paths = with pkgs; [
+            self'.packages.default
+          ];
+          name = "foo-root";
+          pathsToLink = [ "/bin" "/lib" "/include" ];
+        };
+        config = {
+          Cmd = [ "${pkgs.lib.getExe self'.packages.default}" ];
+        };
+      };
+
     };
 
   };
