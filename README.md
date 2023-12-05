@@ -1,0 +1,2 @@
+# CppTempl
+## Build, test & run
