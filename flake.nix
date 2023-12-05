@@ -14,6 +14,31 @@
       packages = {
         default = pkgs.callPackage ./package.nix { };
         clang = pkgs.callPackage ./package.nix { stdenv = pkgs.clang16Stdenv; };
+        gcc = pkgs.callPackage ./package.nix { stdenv = pkgs.gccStdenv; };
+
+        dockerImage = pkgs.dockerTools.buildImage {
+          name = "CppTemplAppContainer";
+          created = "now";
+          tag = builtins.substring 0 9 (self'.rev or "dev");
+          copyToRoot = pkgs.buildEnv {
+            paths = with pkgs; [
+              self'.packages.default
+              #cacert
+              #coreutils
+              #bash
+            ];
+            name = "cpptemplapp-root";
+            pathsToLink = [ "/bin" "/lib" "/include" ];
+          };
+          config = {
+            Cmd = [ "bin/CppTemplApp" ];
+            Env = [
+              #"SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
+              #"SYSTEM_CERTIFICATE_PATH=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
+            ];
+          };
+        };
+
       } // pkgs.lib.optionalAttrs (system != "x86_64-linux") {
         crossIntel = pkgs.pkgsCross.gnu64.callPackage ./package.nix {
           enableTests = false;
@@ -27,6 +52,9 @@
       checks = config.packages // {
         clang = config.packages.default.override {
           stdenv = pkgs.clang16Stdenv;
+        };
+        gcc = config.packages.default.override {
+          stdenv = pkgs.gccStdenv;
         };
       };
 
