@@ -22,6 +22,9 @@
           copyToRoot = pkgs.buildEnv {
             paths = with pkgs; [
               self'.packages.default
+              #cacert
+              #coreutils
+              #bash
             ];
             name = "cpptemplapp-root";
             pathsToLink = [ "/bin" "/lib" "/include" ];
