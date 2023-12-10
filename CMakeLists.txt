@@ -11,12 +11,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS OFF)
 
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 option(TESTING "Build tests" ON)
-option(USE_FETCH_CONTENT "Manage dependencies with FetchContent" OFF)
-
-if(USE_FETCH_CONTENT)
-    include(dependencies.cmake)
-    EnableUseFetchContent()
-endif(USE_FETCH_CONTENT)
 
 add_subdirectory(src)
 add_subdirectory(app)
