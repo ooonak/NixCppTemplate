@@ -1,5 +1,7 @@
 {
-  description = "CppTempl";
+  description = "NixCppTempl";
+  # Assumes that git-prompt.sh is installed and configured from .bashrc
+  #nixConfig.bash-prompt = "\[${description}]$(__git_ps1) \$ ";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
