@@ -1,7 +1,5 @@
 {
   description = "NixCppTempl";
-  # Assumes that git-prompt.sh is installed and configured from .bashrc
-  #nixConfig.bash-prompt = "\[${description}]$(__git_ps1) \$ ";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -41,11 +39,25 @@
           };
         };
 
-      } // pkgs.lib.optionalAttrs (system != "x86_64-linux") {
+        # Development shell configuration
+        #devShell = {
+        devShell = pkgs.mkShell {
+          #name = "x";
+          shellHook = ''
+            echo fisk
+            myVar=123abc
+            export PS1="\[fisk\] \\$"
+          '';
+        };
+
+      } # packages
+
+      // pkgs.lib.optionalAttrs (system != "x86_64-linux") {
         crossIntel = pkgs.pkgsCross.gnu64.callPackage ./package.nix {
           enableTests = false;
         };
-      } // pkgs.lib.optionalAttrs (system != "aarch64-linux") {
+      }
+      // pkgs.lib.optionalAttrs (system != "aarch64-linux") {
         crossAarch64 = pkgs.pkgsCross.aarch64-multiplatform.callPackage ./package.nix {
           enableTests = false;
         };
@@ -60,7 +72,6 @@
         };
       };
 
-    };
-
-  };
+    }; # perSystem
+  }; # flake.parts.lib.mkFlake
 }
